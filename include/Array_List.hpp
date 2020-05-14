@@ -41,7 +41,7 @@ public:
             array_[i]=ArrayList.array_[i];
         }
     }
-    void Append(T value){
+    void Append(T value){ // Метод добавления элемента в конец массива
         size_++;
         last_index_++;
         if (capacity_==size_) {
@@ -49,7 +49,7 @@ public:
         }
         array_[last_index_]=value;
     }
-    void Prepend(T value){
+    void Prepend(T value){ // Метод добавления элемента в начало массива
         size_++;
         last_index_++;
         if (capacity_==size_){
