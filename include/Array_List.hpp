@@ -9,7 +9,8 @@ private:
     int size_; // Кол-во элементов в массиве
     int last_index_; // Последний занятый индекс в массиве
     T* array_; // Динамический массив, в  котором хранятся все данные
-    void MemoryUp(){ // Метод увеличения памяти для массива
+    // Метод увеличения памяти для массива
+    void MemoryUp(){
         capacity_*=2;
         T* new_array;
         new_array=new T[capacity_];
@@ -19,7 +20,8 @@ private:
         delete array_;
         array_=new_array;
     }
-    void MemoryDown(){ // Метод сокращения памяти для массива
+    // Метод сокращения памяти для массива
+    void MemoryDown(){
         capacity_/=2;
         T* new_array;
         new_array=new T[capacity_];
@@ -30,10 +32,12 @@ private:
         array_=new_array;
     }
 public:
-    explicit Array_List(int capacity=2) : capacity_(capacity), size_(0), last_index_(-1){ // Конструктор
+    // Конструктор
+    explicit Array_List(int capacity=2) : capacity_(capacity), size_(0), last_index_(-1){
         array_=new T[capacity];
     }
-    Array_List(const Array_List &ArrayList){ // Конструктор копирования
+    // Конструктор копирования
+    Array_List(const Array_List &ArrayList){
         capacity_=ArrayList.capacity_;
         size_=ArrayList.size_;
         last_index_=ArrayList.last_index_;
@@ -42,7 +46,8 @@ public:
             array_[i]=ArrayList.array_[i];
         }
     }
-    void Append(T value){ // Метод добавления элемента в конец массива
+    // Метод добавления элемента в конец массива
+    void Append(T value){
         size_++;
         last_index_++;
         if (capacity_==size_) {
@@ -50,7 +55,8 @@ public:
         }
         array_[last_index_]=value;
     }
-    void Prepend(T value){ // Метод добавления элемента в начало массива
+    // Метод добавления элемента в начало массива
+    void Prepend(T value){
         size_++;
         last_index_++;
         if (capacity_==size_){
@@ -61,9 +67,10 @@ public:
         }
         array_[0]=value;
     }
-    void AppendAll(const Array_List<T> that){ // Метод добавления всех элементов одного списка в конец другого
+    // Метод добавления всех элементов одного списка в конец другого
+    void AppendAll(const Array_List<T> that){
         if (that.size_==0) {
-            return exit(1);
+            exit(1);
         }
         int size_all=size_+that.size_;
         if (capacity_ == size_all) {
@@ -79,7 +86,8 @@ public:
             MemoryDown();
         }
     }
-    void InsertAt(int index, T value) { // Вставка элемента после индекса
+    // Вставка элемента после индекса
+    void InsertAt(int index, T value) {
         if ((index >= 0) && (index <= last_index_)) {
             size_++;
             last_index_++;
@@ -92,7 +100,8 @@ public:
             array_[index+1]=value;
         }
     }
-    void RemoveAt(int index) { // Удаление элемента по индексу
+    // Удаление элемента по индексу
+    void RemoveAt(int index) {
         if (index >=0 && index <= last_index_){
             size_--;
             last_index_--;
@@ -104,14 +113,16 @@ public:
             }
         }
     }
-    void RemoveAll() { // Удаление всех элементов из списка
+    // Удаление всех элементов из списка
+    void RemoveAll() {
         last_index_=-1;
         capacity_=2;
         size_=0;
         delete array_;
         array_=new T[capacity_];
     }
-    T Pop(){ // Удаление и возвращение последнего элемента
+    // Удаление и возвращение последнего элемента
+    T Pop(){
         if (size_ == 0) {
             exit(1);
         }
@@ -123,25 +134,28 @@ public:
         }
         return value;
     }
-    T Dequeue() { // Удаление и возвращение 1-ого элемента
-        if (size_ == 0){
+    // Удаление и возвращение 1-ого элемента
+    T Dequeue() {
+        if (size_ == 0) {
             exit(1);
         }
-        T value=array_[0];
+        T value = array_[0];
         size_--;
         last_index_--;
-        for (int i=0; i < size_; i++){
-            array_[i]=array_[i+1];
+        for (int i = 0; i < size_; i++) {
+            array_[i] = array_[i + 1];
         }
-        if (capacity_/4 == size_){
+        if (capacity_ / 4 == size_) {
             MemoryDown();
         }
         return value;
-        }
-    int Length() const{ // Нахождение длины списка
+    }
+    // Нахождение длины списка
+    int Length() const{
         return size_;
     }
-    T GetAt(int index) { // Взятие элемента по индексу
+    // Взятие элемента по индексу
+    T GetAt(int index) {
         if (size_ <= 0 || index < 0 || index > last_index_) {
             exit(-1);
         }
