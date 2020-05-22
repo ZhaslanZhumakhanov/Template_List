@@ -49,4 +49,6 @@ static void Test_LinkedList(){
     assert(1 == list4[0]);
     list4[0]=10;
     assert(10 == list4[0]);
+    Linked_List<int> vector = {1,2,3,4,5};
+    assert(3 == vector[2]);
 }

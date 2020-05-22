@@ -18,6 +18,15 @@ private:
     Node<T> *head_ = nullptr;
     Node<T> *tail_ = nullptr;
 public:
+    // Конструктор
+    Linked_List() : head_(nullptr), tail_(nullptr){}
+
+    // Конструктор инициализации
+    Linked_List(std::initializer_list<T> elements) {
+        for (auto& element: elements) {
+            Append(element);
+        }
+    }
     // Метод добавления элемента в конец списка
     void Append(T value) {
         Node<T> *tmp = new Node<T>;
@@ -159,5 +168,18 @@ public:
             tmp = tmp->next_;
         }
         return tmp->value_;
+    }
+
+    // Деструктор
+    ~Linked_List(){
+        Node<T> *tmp = head_;
+        for (int i = 0; i < Length() - 1; i++) {
+            tmp = tmp->next_;
+            delete head_;
+            head_ = tmp;
+        }
+        delete tail_;
+        delete tmp;
+        std::cout << "~Linked_List" << std::endl;
     }
 };
