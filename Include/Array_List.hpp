@@ -36,6 +36,7 @@ public:
     explicit Array_List(int capacity=2) : capacity_(capacity), size_(0), last_index_(-1){
         array_=new T[capacity];
     }
+
     // Конструктор копирования
     Array_List(const Array_List &ArrayList){
         capacity_=ArrayList.capacity_;
@@ -46,6 +47,7 @@ public:
             array_[i]=ArrayList.array_[i];
         }
     }
+
     // Метод добавления элемента в конец массива
     void Append(T value){
         size_++;
@@ -55,6 +57,7 @@ public:
         }
         array_[last_index_]=value;
     }
+
     // Метод добавления элемента в начало массива
     void Prepend(T value){
         size_++;
@@ -67,6 +70,7 @@ public:
         }
         array_[0]=value;
     }
+
     // Метод добавления всех элементов одного списка в конец другого
     void AppendAll(const Array_List<T> that){
         if (that.size_==0) {
@@ -86,6 +90,7 @@ public:
             MemoryDown();
         }
     }
+
     // Вставка элемента после индекса
     void InsertAt(int index, T value) {
         if ((index >= 0) && (index <= last_index_)) {
@@ -100,6 +105,7 @@ public:
             array_[index+1]=value;
         }
     }
+
     // Удаление элемента по индексу
     void RemoveAt(int index) {
         if (index >=0 && index <= last_index_){
@@ -113,6 +119,7 @@ public:
             }
         }
     }
+
     // Удаление всех элементов из списка
     void RemoveAll() {
         last_index_=-1;
@@ -121,6 +128,7 @@ public:
         delete array_;
         array_=new T[capacity_];
     }
+
     // Удаление и возвращение последнего элемента
     T Pop(){
         if (size_ == 0) {
@@ -134,6 +142,7 @@ public:
         }
         return value;
     }
+
     // Удаление и возвращение 1-ого элемента
     T Dequeue() {
         if (size_ == 0) {
@@ -150,10 +159,12 @@ public:
         }
         return value;
     }
+
     // Нахождение длины списка
     int Length() const{
         return size_;
     }
+
     // Взятие элемента по индексу
     T GetAt(int index) {
         if (size_ <= 0 || index < 0 || index > last_index_) {

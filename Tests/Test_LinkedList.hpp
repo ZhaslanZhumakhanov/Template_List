@@ -4,10 +4,10 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "Linked_List.hpp"
+#include "../Include/Linked_List.hpp"
 
 static void Test_LinkedList(){
-    Linked::Linked_List<int> list;
+    Linked_List<int> list;
     assert(0 == list.Length());
     list.Append(42); // ([42]) - список
     assert(1 == list.Length());
@@ -26,12 +26,12 @@ static void Test_LinkedList(){
     assert(1 == list[0]);
     // InsertAt(list,2,3);
     // assert(1 == list[0]); Выход за границы списка
-    Linked::Linked_List<int> list2;
+    Linked_List<int> list2;
     list2.AppendAll(list); // ([1] [2])
     assert(2 == list[1]);
     list.AppendAll(list2); // ([1] [2] [1] [2])
     assert(2 == list[3]);
-    Linked::Linked_List<int> list3;
+    Linked_List<int> list3;
     list.AppendAll(list3); // ([1] [2] [1] [2])
     // AssertEq(2,GetAt(list,4),"AppendAll_3"); Выход за границы списка
     // AssertEq(0,Length(list2),"Destroy"); Нахождение длины несуществующего списка
@@ -44,7 +44,7 @@ static void Test_LinkedList(){
     assert(1 == value);
     value=list.Dequeue();
     assert(2 == value);
-    Linked::Linked_List<int> list4;
+    Linked_List<int> list4;
     list4.Append(1);
     assert(1 == list4[0]);
     list4[0]=10;

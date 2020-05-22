@@ -3,4 +3,11 @@ project(Template_List)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Template_List main.cpp include/Array_List.hpp include/Linked_List.hpp include/Test_ArrayList.hpp include/Test_LinkedList.hpp)
+set(PROJECT_HEADERS_DIR ${PROJECT_SOURCE_DIR}/Include)
+set(PROJECT_SOURCES_DIR ${PROJECT_SOURCE_DIR}/Tests)
+
+file(GLOB_RECURSE HEADERS ${PROJECT_HEADERS_DIR}/*.hpp)
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCES_DIR}/*.hpp)
+
+add_executable(Template_List ${HEADERS} ${SOURCES} main.cpp)
+
