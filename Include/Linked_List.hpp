@@ -18,8 +18,52 @@ private:
     Node<T> *head_ = nullptr;
     Node<T> *tail_ = nullptr;
 public:
+    // Итератор
+    class iterator {
+    private:
+        Node<T> *ptr_= nullptr;
+    public:
+        // конструктор
+        explicit iterator(Node<T>* ptr) : ptr_(ptr) {}
+
+        const iterator operator++(){
+            ptr_=ptr_->next_;
+            return *this;
+        }
+        iterator operator++(int junk){
+            iterator tmp = *this;
+            ++(*tmp);
+            return tmp;
+        }
+        T& operator*(){
+            return ptr_->value_;
+        }
+        T* operator->(){
+            return &ptr_->value_;
+        }
+        bool operator==(const iterator& rhs){
+            return rhs.ptr_ == ptr_;
+        }
+        bool operator!=(const iterator& rhs){
+            return rhs.ptr_ != ptr_;
+        }
+    };
+
     // Конструктор
-    Linked_List() : head_(nullptr), tail_(nullptr){}
+    explicit Linked_List() : head_(nullptr), tail_(nullptr){}
+
+    // Конструктор копирования
+    Linked_List (const Linked_List<T> &that) {
+        if (that.Length() > 0){
+            for (int i=0; i<that.Length(); i++){
+                Append(that[i]);
+            }
+        }
+        else{
+            head_= nullptr;
+            tail_= nullptr;
+        }
+    }
 
     // Конструктор инициализации
     Linked_List(std::initializer_list<T> elements) {
@@ -27,6 +71,7 @@ public:
             Append(element);
         }
     }
+
     // Метод добавления элемента в конец списка
     void Append(T value) {
         Node<T> *tmp = new Node<T>;
@@ -170,16 +215,19 @@ public:
         return tmp->value_;
     }
 
+    // Возвращает итератор, указывающий на начало списка
+    iterator begin() const{
+        return iterator(head_);
+    }
+
+    // Возвращает итератор, указывающий на конец списка
+    iterator end() const{
+        return iterator(tail_->next_);
+    }
+
     // Деструктор
     ~Linked_List(){
-        Node<T> *tmp = head_;
-        for (int i = 0; i < Length() - 1; i++) {
-            tmp = tmp->next_;
-            delete head_;
-            head_ = tmp;
-        }
-        delete tail_;
-        delete tmp;
+        delete head_;
         std::cout << "~Linked_List" << std::endl;
     }
 };

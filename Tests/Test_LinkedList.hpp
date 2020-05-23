@@ -24,7 +24,7 @@ static void Test_LinkedList(){
     list.InsertAt(0,2); // ([1] [2])
     assert(2 == list[1]);
     assert(1 == list[0]);
-    // InsertAt(list,2,3);
+    // list.InsertAt(2,3);
     // assert(1 == list[0]); Выход за границы списка
     Linked_List<int> list2;
     list2.AppendAll(list); // ([1] [2])
@@ -33,13 +33,13 @@ static void Test_LinkedList(){
     assert(2 == list[3]);
     Linked_List<int> list3;
     list.AppendAll(list3); // ([1] [2] [1] [2])
-    // AssertEq(2,GetAt(list,4),"AppendAll_3"); Выход за границы списка
-    // AssertEq(0,Length(list2),"Destroy"); Нахождение длины несуществующего списка
+    // assert(2 == list[4]); Выход за границы списка
+    // assert(0 == list2.Length()); Нахождение длины несуществующего списка
     list.RemoveAt(3); // ([1] [2] [1])
     assert(3 == list.Length());
     list.RemoveAt(0); // ([2] [1])
     assert(2 == list[0]);
-    //RemoveAt(list,2); //Выход за границы списка
+    //list.RemoveAt(2); //Выход за границы списка
     int value=list.Pop(); // ([2])
     assert(1 == value);
     value=list.Dequeue();
@@ -51,4 +51,12 @@ static void Test_LinkedList(){
     assert(10 == list4[0]);
     Linked_List<int> vector = {1,2,3,4,5};
     assert(3 == vector[2]);
+    Linked_List<int> vector_copy=vector;
+    assert(3 == vector_copy[2]);
+    vector_copy[2]=10;
+    assert(10 == vector_copy[2]);
+    assert(3 == vector[2]);
+    for (auto &element: vector){
+        std::cout << element << " ";
+    }
 }

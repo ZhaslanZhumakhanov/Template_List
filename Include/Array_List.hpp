@@ -52,13 +52,13 @@ public:
     }
 
     // Конструктор копирования
-    Array_List(const Array_List &ArrayList){
-        capacity_=ArrayList.capacity_;
-        size_=ArrayList.size_;
-        last_index_=ArrayList.last_index_;
+    Array_List(const Array_List<T> &that){
+        capacity_=that.capacity_;
+        size_=that.size_;
+        last_index_=that.last_index_;
         array_=new T[capacity_];
         for (int i=0; i<size_; i++){
-            array_[i]=ArrayList.array_[i];
+            array_[i]=that.array_[i];
         }
     }
 
