@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <cassert>
 
 template <typename T>
 class Array_List{
@@ -43,7 +44,7 @@ public:
         capacity_ = elements.size() * 2;
         size_ = elements.size();
         last_index_ = elements.size() - 1;
-        array_ = static_cast<T*>(new T[capacity_]);
+        array_ = new T[capacity_];
         int i = 0;
         for (auto &element : elements) {
             array_[i]=element;
@@ -88,9 +89,7 @@ public:
 
     // Метод добавления всех элементов одного списка в конец другого
     void AppendAll(const Array_List<T> that){
-        if (that.size_==0) {
-            exit(1);
-        }
+        assert(that.size_ > 0);
         int size_all=size_+that.size_;
         if (capacity_ == size_all) {
             while (capacity_<=size_all) {
@@ -108,30 +107,28 @@ public:
 
     // Вставка элемента после индекса
     void InsertAt(int index, T value) {
-        if ((index >= 0) && (index <= last_index_)) {
-            size_++;
-            last_index_++;
-            if (capacity_ == size_) {
-                MemoryUp();
-            }
-            for (int i = last_index_; i > (index+1); i--){
-                array_[i]=array_[i-1];
-            }
-            array_[index+1]=value;
+        assert(index >= 0 && index <= last_index_);
+        size_++;
+        last_index_++;
+        if (capacity_ == size_) {
+            MemoryUp();
         }
+        for (int i = last_index_; i > (index+1); i--){
+            array_[i]=array_[i-1];
+        }
+        array_[index+1]=value;
     }
 
     // Удаление элемента по индексу
     void RemoveAt(int index) {
-        if (index >=0 && index <= last_index_){
-            size_--;
-            last_index_--;
-            for (int i = index; i < size_ ; i++) {
-                array_[i] = array_[i + 1];
-            }
-            if (capacity_ / 4 >= size_){
-                MemoryDown();
-            }
+        assert(index >=0 && index <= last_index_);
+        size_--;
+        last_index_--;
+        for (int i = index; i < size_ ; i++) {
+            array_[i] = array_[i + 1];
+        }
+        if (capacity_ / 4 >= size_){
+            MemoryDown();
         }
     }
 
@@ -146,9 +143,7 @@ public:
 
     // Удаление и возвращение последнего элемента
     T Pop(){
-        if (size_ == 0) {
-            exit(1);
-        }
+        assert(size_ != 0);
         T value=array_[last_index_];
         size_--;
         last_index_--;
@@ -160,9 +155,7 @@ public:
 
     // Удаление и возвращение 1-ого элемента
     T Dequeue() {
-        if (size_ == 0) {
-            exit(1);
-        }
+        assert(size_ != 0);
         T value = array_[0];
         size_--;
         last_index_--;
@@ -182,9 +175,7 @@ public:
 
     // Взятие элемента по индексу
     T& operator [](int index) const{
-        if (size_ <= 0 || index < 0 || index > last_index_) {
-            exit(-1);
-        }
+        assert(size_>0 && index>=0 && index<=last_index_);
         return array_[index];
     }
 

@@ -109,9 +109,7 @@ public:
 
     // Метод добавления элемента после индекса
     void InsertAt(int index,T value) {
-        if (index < 0 || index >= Length()) {
-            exit(-1);
-        }
+        assert(index >= 0 && index<Length());
         Node<T> *tmp = head_;
         for (int i = 0; i < index; i++) {
             tmp = tmp->next_;
@@ -147,6 +145,7 @@ public:
 
     // Метод удаления всех элементов
     void RemoveAll() {
+        assert(head_ != nullptr);
         Node<T> *tmp = head_;
         for (int i = 0; i < Length() - 1; i++) {
             tmp = tmp->next_;
@@ -160,9 +159,7 @@ public:
 
     // Метод удаления элемента с конца списка, возвращает значение этого элемента
     T Pop() {
-        if (Length() == 0) {
-            exit(-1);
-        }
+        assert(Length() > 0);
         T value = tail_->value_;
         Node<T> *tmp = head_;
         for (int i = 0; i < Length() - 2; i++) {
@@ -176,9 +173,7 @@ public:
 
     // Метод удаления элемента с начала списка, возвращает значение этого элемента
     T Dequeue() {
-        if (head_ == nullptr) {
-            exit(-1);
-        }
+        assert(head_ != nullptr);
         T value = head_->value_;
         Node<T> *tmp = head_->next_;
         delete head_;
@@ -205,9 +200,7 @@ public:
 
     // Метод взятия значения по индексу
     T& operator[](int index) const{
-        if (head_ == nullptr || index >= Length()) {
-            exit(-1);
-        }
+        assert(head_ != nullptr && index<Length());
         Node<T> *tmp = head_;
         for (int i = 0; i < index; i++) {
             tmp = tmp->next_;
