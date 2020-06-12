@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <memory>
 
 #include "../Include/Array_List.hpp"
 
@@ -50,4 +51,37 @@ static void Test_ArrayList() {
     for (auto el = arr.begin(); el != arr.end(); el++) {
         std::cout << *el << " ";
     }
+}
+
+static void Test_HardArrayList(){
+    Array_List<std::unique_ptr<int>> arr1;
+    assert(arr1.Length() == 0);
+    arr1.Append(std::make_unique<int>(1));
+    assert(arr1.Length() == 1);
+    assert(*arr1[0].get() == 1);
+    arr1.Prepend(std::make_unique<int>(2));
+    assert(*arr1[0].get() == 2);
+    assert(*arr1[1].get() == 1);
+    arr1.InsertAt(0, std::make_unique<int>(3));
+    assert(*arr1[1].get() == 3);
+    assert(2 == *arr1.Dequeue().get());
+    assert(1 == *arr1.Pop().get());
+    arr1.InsertAt(0, std::make_unique<int>(4));
+    assert(*arr1[1].get() == 4);
+    arr1.Append(std::make_unique<int>(5));
+    arr1.RemoveAt(1);
+    assert(*arr1[1].get() == 5);
+    for (auto& el: arr1) {
+        std::cout << *el << " ";
+    }
+    std::cout << std::endl;
+    for (auto el = arr1.begin(); el != arr1.end(); el++) {
+        std::cout << **el << " ";
+    }
+    std::cout << std::endl;
+    Array_List<std::unique_ptr<int >> arr2(std::move(arr1));
+    assert(*arr2[1].get() == 5);
+    Array_List<std::unique_ptr<int >> arr3;
+    arr3 = std::move(arr2);
+    assert(*arr3[0].get() == 3);
 }

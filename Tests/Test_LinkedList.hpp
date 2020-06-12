@@ -6,6 +6,10 @@
 
 #include "../Include/Linked_List.hpp"
 
+class A{
+
+};
+
 static void Test_LinkedList(){
     Linked_List<int> list;
     assert(0 == list.Length());
@@ -59,4 +63,6 @@ static void Test_LinkedList(){
     for (auto &element: vector){
         std::cout << element << " ";
     }
+    Linked_List<A> a;
+    a.Append(A{});
 }

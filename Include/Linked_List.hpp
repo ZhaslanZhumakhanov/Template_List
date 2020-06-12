@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <cassert>
 
 // В узле списка хранится само значение value и указатель на следующий узел.
 // Эту структуру пользователи списка не должны видеть, так как она относится к внутренней реализации.
@@ -144,7 +145,7 @@ public:
     }
 
     // Метод удаления всех элементов
-    void RemoveAll() {
+    void RemoveAll() { //TODO сделать, как деструктор
         assert(head_ != nullptr);
         Node<T> *tmp = head_;
         for (int i = 0; i < Length() - 1; i++) {
@@ -220,7 +221,12 @@ public:
 
     // Деструктор
     ~Linked_List(){
-        delete head_;
+        auto tmp= head_;
+        while (tmp != nullptr){
+            tmp=tmp->next_;
+            delete head_;
+            head_=tmp;
+        }
         std::cout << "~Linked_List" << std::endl;
     }
 };

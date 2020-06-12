@@ -13,30 +13,31 @@ private:
     T* array_; // Динамический массив, в  котором хранятся все данные
     // Метод увеличения памяти для массива
     void MemoryUp(){
-        capacity_*=2;
-        T* new_array;
-        new_array=new T[capacity_];
-        for (int i=0; i<size_; i++){
-            new_array[i]=array_[i];
+        capacity_ *= 2;
+        T* new_array = static_cast<T*>(::operator new(sizeof(T)*capacity_));
+        for (int i=0; i < size_; i++){
+            ::new(new_array+i) T(std::move(array_[i]));
         }
         delete array_;
-        array_=new_array;
+        array_ = new_array;
     }
     // Метод сокращения памяти для массива
     void MemoryDown(){
-        capacity_/=2;
-        T* new_array;
-        new_array=new T[capacity_];
+        capacity_ /= 2;
+        T* new_array = static_cast<T*>(::operator new(sizeof(T)*capacity_));
         for (int i=0; i<size_; i++){
-            new_array[i]=array_[i];
+            ::new(new_array+i) T(std::move(array_[i]));
         }
         delete array_;
-        array_=new_array;
+        array_ = new_array;
     }
 public:
     // Конструктор
     explicit Array_List(int capacity=2) : capacity_(capacity), size_(0), last_index_(-1){
-        array_=new T[capacity];
+        if (capacity < 2){
+            capacity_ = 2;
+        }
+        array_ = static_cast<T*>(::operator new(sizeof(T)*capacity_));
     }
 
     // Конструктор инициализации
@@ -44,10 +45,10 @@ public:
         capacity_ = elements.size() * 2;
         size_ = elements.size();
         last_index_ = elements.size() - 1;
-        array_ = new T[capacity_];
+        array_ = static_cast<T*>(::operator new(sizeof(T)*capacity_));
         int i = 0;
         for (auto &element : elements) {
-            array_[i]=element;
+            ::new(array_+i) T(element);
             i++;
         }
     }
@@ -57,56 +58,113 @@ public:
         capacity_=that.capacity_;
         size_=that.size_;
         last_index_=that.last_index_;
-        array_=new T[capacity_];
+        array_=static_cast<T*>(::operator new(sizeof(T)*capacity_));
         for (int i=0; i<size_; i++){
-            array_[i]=that.array_[i];
+            ::new(array_+i) T(that.array_[i]);
         }
     }
 
+    // Оператор присваивания копированием
+    Array_List<T>& operator = (const Array_List<T> &that){
+        if (this != &that){
+            for (int i=0; i < this->size_; i++) {
+                array_[i].~T();
+            }
+            ::operator delete(array_);
+            capacity_=that.capacity_;
+            size_=that.size_;
+            last_index_=that.last_index_;
+            array_=static_cast<T*>(::operator new(sizeof(T)*capacity_));
+            for (int i=0; i<size_; i++){
+                ::new(array_+i) T(that.array_[i]);
+            }
+        }
+        return *this;
+    }
+
+    // Конструктор перемещения
+    Array_List(Array_List<T>&& that) noexcept{
+        capacity_ = that.capacity_;
+        size_ = that.size_;
+        last_index_ = that.last_index_;
+        array_ = std::move(that.array_);
+        that.capacity_ = 2;
+        that.size_ = 0;
+        that.last_index_ = -1;
+        that.array_ = static_cast<T*>(::operator new(sizeof(T)*that.capacity_));
+    }
+
+    // Оператор присваивания перемещением
+    Array_List<T>& operator = (Array_List<T> &&that) noexcept{
+        if (this != &that){
+            for (int i=0; i < this->size_; i++) {
+                array_[i].~T();
+            }
+            ::operator delete(array_);
+            capacity_=that.capacity_;
+            size_=that.size_;
+            last_index_=that.last_index_;
+            array_=std::move(that.array_);
+            that.capacity_ = 2;
+            that.size_ = 0;
+            that.last_index_ = -1;
+            that.array_ = static_cast<T*>(::operator new(sizeof(T)*that.capacity_));
+        }
+        return *this;
+    }
 
     // Метод добавления элемента в конец массива
-    void Append(T value){
+    void Append(const T& value){
         size_++;
         last_index_++;
         if (capacity_==size_) {
             MemoryUp();
         }
-        array_[last_index_]=value;
+        ::new(array_+last_index_) T(value);
+    }
+    void Append(T&& value){
+        size_++;
+        last_index_++;
+        if (capacity_==size_) {
+            MemoryUp();
+        }
+        ::new(array_+last_index_) T(std::move(value));
     }
 
     // Метод добавления элемента в начало массива
-    void Prepend(T value){
+    void Prepend(const T& value){
         size_++;
         last_index_++;
         if (capacity_==size_){
             MemoryUp();
         }
         for (int i=0; i<(size_-1); i++){
-            array_[i+1]=array_[i];
+            ::new(array_+i+1) T(array_[i]);
         }
-        array_[0]=value;
+        ::new(array_) T(value);
+    }
+    void Prepend(T&& value){
+        size_++;
+        last_index_++;
+        if (capacity_==size_){
+            MemoryUp();
+        }
+        for (int i=0; i<(size_-1); i++){
+            ::new(array_+i+1) T(std::move(array_[i]));
+        }
+        ::new(array_) T(std::move(value));
     }
 
     // Метод добавления всех элементов одного списка в конец другого
-    void AppendAll(const Array_List<T> that){
-        assert(that.size_ > 0);
-        int size_all=size_+that.size_;
-        if (capacity_ == size_all) {
-            while (capacity_<=size_all) {
-                MemoryUp();
-            }
-        }
-        for (int i = 0; i < that.size_; i++) {
+    void AppendAll(const Array_List<T>& that){
+        for (int i=0; i < that.size_; i++){
             Append(that.array_[i]);
         }
-        size_=size_all;
-        if (capacity_ / 4 >= size_all) {
-            MemoryDown();
-        }
     }
+    void AppendAll(Array_List<T>&& that) = delete;
 
     // Вставка элемента после индекса
-    void InsertAt(int index, T value) {
+    void InsertAt(int index,const T& value) {
         assert(index >= 0 && index <= last_index_);
         size_++;
         last_index_++;
@@ -114,9 +172,21 @@ public:
             MemoryUp();
         }
         for (int i = last_index_; i > (index+1); i--){
-            array_[i]=array_[i-1];
+            ::new(array_+i) T(array_[i-1]);
         }
-        array_[index+1]=value;
+        ::new(array_+index+1) T(value);
+    }
+    void InsertAt(int index,T&& value) {
+        assert(index >= 0 && index <= last_index_);
+        size_++;
+        last_index_++;
+        if (capacity_ == size_) {
+            MemoryUp();
+        }
+        for (int i = last_index_; i > (index+1); i--){
+            ::new(array_+i) T(std::move(array_[i-1]));
+        }
+        ::new(array_+index+1) T(std::move(value));
     }
 
     // Удаление элемента по индексу
@@ -124,8 +194,9 @@ public:
         assert(index >=0 && index <= last_index_);
         size_--;
         last_index_--;
+        array_[index].~T();
         for (int i = index; i < size_ ; i++) {
-            array_[i] = array_[i + 1];
+            ::new(array_+i) T(std::move(array_[i+1]));
         }
         if (capacity_ / 4 >= size_){
             MemoryDown();
@@ -134,17 +205,20 @@ public:
 
     // Удаление всех элементов из списка
     void RemoveAll() {
+        for (int i=0; i < size_; i++){
+            array_[i].~T();
+        }
+        ::operator delete(array_);
         last_index_=-1;
         capacity_=2;
         size_=0;
-        delete array_;
-        array_=new T[capacity_];
+        array_=static_cast<T*>(::operator new(sizeof(T)*capacity_));
     }
 
     // Удаление и возвращение последнего элемента
     T Pop(){
         assert(size_ != 0);
-        T value=array_[last_index_];
+        T value=std::move(array_[last_index_]);
         size_--;
         last_index_--;
         if (capacity_/4 >= size_){
@@ -156,11 +230,11 @@ public:
     // Удаление и возвращение 1-ого элемента
     T Dequeue() {
         assert(size_ != 0);
-        T value = array_[0];
+        T value = std::move(array_[0]);
         size_--;
         last_index_--;
         for (int i = 0; i < size_; i++) {
-            array_[i] = array_[i + 1];
+            ::new(array_+i) T(std::move(array_[i + 1]));
         }
         if (capacity_ / 4 == size_) {
             MemoryDown();
@@ -174,27 +248,31 @@ public:
     }
 
     // Взятие элемента по индексу
-    T& operator [](int index) const{
+    const T& operator [](int index) const{
+        assert(size_>0 && index>=0 && index<=last_index_);
+        return array_[index];
+    }
+    T& operator [](int index){
         assert(size_>0 && index>=0 && index<=last_index_);
         return array_[index];
     }
 
     // Возвращает итератор, указывающий на начало списка
-    T *begin() const {
+    T* begin() const {
         return array_;
     }
 
     // Возвращает итератор, указывающий на конец списка
-    T *end() const {
+    T* end() const {
         return array_+size_;
     }
 
     // Деструктор
     ~Array_List(){
-        capacity_=0;
-        size_=0;
-        last_index_=-1;
-        delete array_;
+        for (int i=0; i<size_; i++){
+            array_[i].~T();
+        }
+        ::operator delete(array_);
         std::cout << "~Array_List" << std::endl;
     }
 };
